@@ -23,4 +23,16 @@ export default {
   saveEvent(event: Event) {
     return apiClient.post('/events', event)
   },
+  getEventImages(images: string[]) {
+    return Promise.all(
+      images.map((image) =>
+        apiClient
+          .get<string>('/presignedUrl', {
+            params: { fileName: image },
+            responseType: 'text',
+          })
+          .then((response) => response.data),
+      ),
+    )
+  },
 }
