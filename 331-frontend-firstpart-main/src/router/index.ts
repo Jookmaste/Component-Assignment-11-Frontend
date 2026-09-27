@@ -13,6 +13,9 @@ import { useEventStore } from '@/stores/event'
 import EventFormView from '@/views/event/EventFormView.vue'
 import OrganizerFormView from '@/views/event/OrganizerFormView.vue'
 import AuctionItemListView from '@/views/auction/AuctionItemListView.vue'
+import OrganizerDetailView from '@/views/event/OrganizerDetailView.vue'
+import OrganizerService from '@/services/OrganizerService'
+import type { AxiosError } from 'axios'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +49,33 @@ const router = createRouter({
       path: '/add-organizer',
       name: 'add-organizer',
       component: OrganizerFormView,
+    },
+    {
+      path: '/organizer/:id',
+      name: 'organizer-detail-view',
+      component: OrganizerDetailView,
+      // ส่งข้อมูล organizer ที่ได้จาก beforeEnter ผ่านทาง props
+      props: (route) => ({
+        id: route.params.id,
+        organizer: route.meta.organizer,
+      }),
+      beforeEnter: (to) => {
+        const id = parseInt(to.params.id as string)
+        return OrganizerService.getOrganizer(id)
+          .then((res) => {
+            to.meta.organizer = res.data
+          })
+          .catch((err: AxiosError) => {
+            if (err.response && err.response.status === 404) {
+              return {
+                name: '404-resource-view',
+                params: { resource: 'organizer' },
+              }
+            } else {
+              return { name: 'network-error-view' }
+            }
+          })
+      },
     },
     {
       path: '/students',

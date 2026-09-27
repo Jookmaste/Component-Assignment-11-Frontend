@@ -15,6 +15,7 @@ export interface Organizer {
   id: number | null
   name: string
   address?: string
+  images?: string[]
 }
 
 export interface Student {
