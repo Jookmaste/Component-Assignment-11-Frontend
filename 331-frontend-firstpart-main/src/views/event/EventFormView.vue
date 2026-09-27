@@ -8,6 +8,7 @@ import { useMessageStore } from '@/stores/message';
 import type { Event, Organizer } from '@/types';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
 const store = useMessageStore()
 const event = ref<Event>({
     id: null,
@@ -19,7 +20,7 @@ const event = ref<Event>({
     time: '',
     petsAllowed: false,
     organizer: {
-        id: 0,
+        id: null,
         name: '',
         address: ''
     },
@@ -39,6 +40,10 @@ onMounted(() => {
 })
 
 const saveEvent = () => {
+    if (event.value.organizer && event.value.organizer.id) {
+        event.value.organizer.id = Number(event.value.organizer.id);
+    }
+
     EventService.saveEvent(event.value)
         .then(res => {
             router.push({ name: 'event-detail-view', params: { id: res.data.id } })
@@ -47,7 +52,10 @@ const saveEvent = () => {
                 store.resetMessage()
             }, 3000)
         })
-        .catch(() => router.push({ name: 'network-error-view' }))
+        .catch((error) => {
+            console.error('Save event failed:', error)
+            router.push({ name: 'network-error-view' })
+        })
 }
 </script>
 

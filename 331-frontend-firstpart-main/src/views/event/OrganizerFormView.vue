@@ -6,7 +6,7 @@ import { ref } from 'vue';
 
 const store = useMessageStore()
 const organizer = ref<Organizer>({
-    id: 0,
+    id: null,
     name: '',
     address: ''
 })

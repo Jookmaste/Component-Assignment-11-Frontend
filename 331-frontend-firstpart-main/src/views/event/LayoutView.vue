@@ -2,6 +2,10 @@
 import { useEventStore } from '@/stores/event';
 import { storeToRefs } from 'pinia';
 
+defineProps<{
+    id?: string | number
+}>()
+
 const store = useEventStore()
 const { event } = storeToRefs(store)
 </script>
